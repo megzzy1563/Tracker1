@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="dash-page.css">
+  <link rel="icon" href="/sources/schoologo.png" type="image/x-icon">
+</head>
+
+<body>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <span class="navbar-brand mb-0 h1">Student Dashboard</span>
+      <div class="d-flex">
+        <button class="btn btn-outline-secondary" type="button" onclick="window.location.href='index.html'">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="card mt-4 mx-3">
+    <h5 class="card-header">Student Attendance Log</h5>
+    <div class="card-body">
+      <h5 class="card-title">See your class standing below</h5>
+      <table class="table table-bordered" id="attendanceTable">
+        <thead>
+          <tr>
+            <th scope="col">Student ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Class Code</th>
+            <th scope="col">Day-1</th>
+            <th scope="col">Day-2</th>
+            <th scope="col">Day-3</th>
+            <th scope="col">Day-4</th>
+            <th scope="col">Day-5</th>
+            <th scope="col">Day-6</th>
+            <th scope="col">Day-7</th>
+            <th scope="col">Day-8</th>
+            <th scope="col">Remarks</th>
+          </tr>
+        </thead>
+        <tbody id="studentData">
+          <!-- Data will be populated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtjkpqH9lFCPUX4ahJBbw9RdUQKme-O0c",
+      authDomain: "fingerprint-attendance-1a1dd.firebaseapp.com",
+      projectId: "fingerprint-attendance-1a1dd",
+      storageBucket: "fingerprint-attendance-1a1dd.appspot.com",
+      messagingSenderId: "947365104002",
+      appId: "1:947365104002:web:81ec0637a02e83aa0ae79b",
+      databaseURL: "https://fingerprint-attendance-1a1dd-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Fetch Student Data
+    function fetchStudentData() {
+      const studentId = localStorage.getItem('studentId');
+      if (!studentId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const studentRef = ref(database , `students/${studentId}`);
+      onValue(studentRef, (snapshot) => {
+        const studentData = snapshot.val();
+        if (studentData) {
+          // Update Navbar with Student Name
+          document.querySelector('.navbar-brand').textContent = `Welcome, ${studentData.fullName}!`;
+
+          // Calculate Attendance and Remarks
+          const totalAttendance = Object.values(studentData).filter((value, index) => index >= 3 && index <= 10 && value === 1).length;
+
+          const remarks = totalAttendance >= 5 ? 'Regular' : 'Probation';
+          const rowClass = remarks === 'Regular' ? 'table-success' : 'table-danger';
+
+          // Render Table Row
+          document.getElementById('studentData').innerHTML = `
+            <tr class="${rowClass}">
+              <td>${studentId}</td>
+              <td>${studentData.fullName}</td>
+              <td>${studentData.classCode}</td>
+              <td>${studentData.classattendA}</td>
+              <td>${studentData.classattendB}</td>
+              <td>${studentData.classattendC}</td>
+              <td>${studentData.classattendD}</td>
+              <td>${studentData.classattendE}</td>
+              <td>${studentData.classattendF}</td>
+              <td>${studentData.classattendG}</td>
+              <td>${studentData.classattendH}</td>
+              <td>${remarks}</td>
+            </tr>
+          `;
+        } else {
+          alert('Student data not found');
+          window.location.href = 'index.html';
+        }
+      });
+    }
+
+    // Load Data on Page Load
+    window.onload = fetchStudentData;
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+</body>
+
+</html>

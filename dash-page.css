@@ -1,0 +1,40 @@
+/* dash-page.css */
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Gabarito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+body {
+    background: #ffff;
+    background-size: cover;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.sticky-header th {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.row-probation {
+  background-color: red; /* Red for probation */
+  color: white; /* Optional: Change text color for better contrast */
+}
+
+.row-regular {
+  background-color: green; /* Green for regular */
+  color: white; /* Optional: Change text color for better contrast */
+}
